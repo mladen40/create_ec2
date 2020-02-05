@@ -1,0 +1,35 @@
+---
+# tasks file for create_ec2
+
+- pip:
+    name:
+      - boto
+      - boto3
+      - botocore
+
+- ec2_instance:
+    name: "ami_testing"
+    profile: default
+    key_name: "EC2Key"
+    vpc_subnet_id: subnet-0f660234ae8bcb5bf
+    security_group: sg-09c2f0b0fc4463f74
+    network:
+      assign_public_ip: true
+    image_id: ami-00eb20669e0990cb4
+    instance_type: t2.micro
+    instance_role: AmazonSSMRoleForInstancesQuickSetup
+    region: us-east-1
+    wait: true
+    wait_timeout: 600
+    tags:
+      Environment: Testing
+  register: ec2_instance
+  tags: ec2
+
+- ec2_instance_info:
+    filters:
+      "tag:Name": "ami_testing"
+  register: ec2_instance_info
+
+- debug:
+    msg: "{{ ec2_instance_info }}"
